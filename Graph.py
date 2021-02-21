@@ -146,6 +146,7 @@ class graph:
             
     
     def prims(self):
+        self.resetColors()
         if(self.directed):
             self.changeGraph()
         parentArr = [None]*self.vertices    
@@ -197,10 +198,11 @@ class graph:
         self.directed = not self.directed
 
     def dijkstraHelper(self):
+        self.resetColors()
         src,dst = self.selectVert()
         self.dijkstra(src,dst)
 
-        
+
 if __name__ == "__main__":
     sp1 = sphere(pos = vector(1,0,0),radius = 0, color = color.blue)
     n = int(input("Enter the No of Vertices : "))
@@ -210,10 +212,10 @@ if __name__ == "__main__":
     m = n*n 
     sleep(0.1)
     while(m > n*(n-1)/2):
-        m = int(input("Enter the No of Edges (Less Than n*(n-1)/2) : "))
+        m = int(input("Enter the No of Edges (Less Than Or Equal To (n*(n-1))) : "))
     for _ in range(m):
         g.addEdges()
     print(g.getAdjMatrix())  
-    #g.dijkstraHelper()
-    sleep(2.5)
-    g.prims()
+    button(bind=g.dijkstraHelper, text='Shortest Path')
+    button(bind=g.prims, text='Min Span Tree')
+    
