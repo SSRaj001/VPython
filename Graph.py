@@ -166,6 +166,8 @@ class graph:
         else:
             for elem in list(self.cylinder.keys()):
                 self.cylinder[elem].color = color.orange
+        for elem in verList:
+            elem.color = color.blue
 
         
 
