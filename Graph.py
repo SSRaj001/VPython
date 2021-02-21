@@ -68,23 +68,23 @@ class graph:
         self.arrows[(src,dst)].color = color.red
     
     def backtrackPath(self,a,dst):
+        self.resetColors(color.yellow)
         pathArr = []
         current = dst
         while(current != -1):
             pathArr.append(current)
             current = a[current]
-        pathArr = pathArr[::-1]
-        print(pathArr)
-        self.verList[pathArr[0]].color = color.cyan
+        self.verList[pathArr[0]].color = color.red
         for i in range(len(pathArr)-1):
-            sleep(0.1)
-            self.findArrow(pathArr[i],pathArr[i+1])
-            sleep(0.1)
+            sleep(1)
+            self.findArrow(pathArr[i+1],pathArr[i])
+            sleep(1)
             if(pathArr[i]!=pathArr[0]):
                 self.verList[pathArr[i]].color = color.green
-        sleep(0.1)        
-        self.verList[pathArr[-1]].color = color.cyan
-        
+        sleep(1)        
+        self.verList[pathArr[-1]].color = color.red
+        pathArr = pathArr[::-1]
+        print(pathArr)
     
     def minDistance(self, dist,visited):
         min = MAX_INT
@@ -106,24 +106,32 @@ class graph:
         for _ in range(self.vertices):
             u = self.minDistance(dist,visited)
             if( u != -1 ):
+                self.verList[u].color = color.white
                 visited[u] = True
                 for ver in range(self.vertices):
+                    if(visited[ver] == False):
+                        self.verList[ver].color = color.white
+                    sleep(1)
                     if(self.matrix[u][ver] > 0 and visited[ver] == False and dist[ver] > dist[u]+self.matrix[u][ver]):
                         dist[ver] = dist[u]+self.matrix[u][ver]
-                        parentArr[ver] = u 
+                        parentArr[ver] = u
+                    if(visited[ver] == False):
+                        self.verList[ver].color = color.blue
+                sleep(1)
+                self.verList[u].color = color.yellow
         print(dist)
         print(parentArr)
         self.backtrackPath(parentArr,dst)
         
     def findEdges(self,edges):
-        self.resetColors()
+        self.resetColors(color.yellow)
+        sleep(1)
         for elem in edges:
+            sleep(1)
             if elem in self.cylinder.keys():
                 self.cylinder[elem].color = color.red
             else:
-                self.cylinder[(elem[1],elem[2])].color = color.red
-            sleep(0.1)
-
+                self.cylinder[(elem[1],elem[0])].color = color.red
     
     def backtrackMST(self,a):
         edgeList = []
@@ -141,25 +149,31 @@ class graph:
         if(self.directed):
             self.changeGraph()
         parentArr = [None]*self.vertices    
-        parentArr[0] = -1
         dist = [MAX_INT]*self.vertices
-        dist[0] = 0
+        dist[0],parentArr[0] = 0,-1
         visited = [False]*self.vertices
         
         for _ in range(self.vertices):
             u = self.minDistance(dist,visited)
             if( u != -1 ):
+                self.verList[u].color = color.white
                 visited[u] = True
                 for ver in range(self.vertices):
+                    if(visited[ver] == False):
+                        self.verList[ver].color = color.white
+                    sleep(1)
                     if(self.matrixDir[u][ver] > 0 and visited[ver] == False and dist[ver] > self.matrixDir[u][ver]):
                         dist[ver] = self.matrixDir[u][ver]
                         parentArr[ver] = u
-                    
+                    if(visited[ver] == False):
+                        self.verList[ver].color = color.blue
+                sleep(1)
+                self.verList[u].color = color.yellow
         print(dist)
         print(parentArr)
         self.backtrackMST(parentArr)
         
-    def resetColors(self):
+    def resetColors(self,col = color.blue):
         if(self.directed):
             for elem in list(self.arrows.keys()):
                 self.arrows[elem].color = color.orange
@@ -167,9 +181,7 @@ class graph:
             for elem in list(self.cylinder.keys()):
                 self.cylinder[elem].color = color.orange
         for elem in self.verList:
-            elem.color = color.blue
-
-        
+            elem.color = col
 
     def changeGraph(self):
         self.resetColors()
@@ -202,6 +214,6 @@ if __name__ == "__main__":
     for _ in range(m):
         g.addEdges()
     print(g.getAdjMatrix())  
-    g.dijkstraHelper()
+    #g.dijkstraHelper()
     sleep(2.5)
     g.prims()
