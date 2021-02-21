@@ -166,7 +166,7 @@ class graph:
         else:
             for elem in list(self.cylinder.keys()):
                 self.cylinder[elem].color = color.orange
-        for elem in verList:
+        for elem in self.verList:
             elem.color = color.blue
 
         
@@ -203,4 +203,5 @@ if __name__ == "__main__":
         g.addEdges()
     print(g.getAdjMatrix())  
     g.dijkstraHelper()
+    sleep(2.5)
     g.prims()
