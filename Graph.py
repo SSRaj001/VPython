@@ -37,8 +37,8 @@ class graph:
         len = self.lengthbtwn(hit1.pos,hit2.pos)
         self.matrix[src][dest] = len
         self.matrixDir[src][dest], self.matrixDir[dest][src]  = len, len
-        arrowTarget = arrow(pos=hit1.pos,axis=vector(-(hit1.pos.x-hit2.pos.x),-(hit1.pos.y-hit2.pos.y),0),color = color.orange,shaftwidth = 0.04)
-        cylinderTarget = cylinder(pos=hit1.pos,axis=vector(-(hit1.pos.x-hit2.pos.x),-(hit1.pos.y-hit2.pos.y),0),color = color.orange,radius = 0.03,visible=False)
+        arrowTarget = arrow(pos=hit1.pos,axis=vector(-(hit1.pos.x-hit2.pos.x),-(hit1.pos.y-hit2.pos.y),0),color = color.yellow,shaftwidth = 0.04)
+        cylinderTarget = cylinder(pos=hit1.pos,axis=vector(-(hit1.pos.x-hit2.pos.x),-(hit1.pos.y-hit2.pos.y),0),color = color.yellow,radius = 0.03,visible=False)
         self.arrows[(src,dest)] = arrowTarget
         self.cylinder[(src,dest)] = cylinderTarget
         print(len)
@@ -65,7 +65,7 @@ class graph:
         
     def findArrow(self,src,dst):
         print(src,dst)
-        self.arrows[(src,dst)].color = color.red
+        self.arrows[(src,dst)].color = color.blue
     
     def backtrackPath(self,a,dst):
         self.resetColors(color.yellow)
@@ -82,7 +82,7 @@ class graph:
             if(pathArr[i]!=pathArr[0]):
                 self.verList[pathArr[i]].color = color.green
         sleep(1)        
-        self.verList[pathArr[-1]].color = color.red
+        self.verList[pathArr[-1]].color = color.blue
         pathArr = pathArr[::-1]
         print(pathArr)
     
@@ -96,8 +96,6 @@ class graph:
         return min_index
     
     def dijkstra(self,src,dst):
-        if(not self.directed):
-            self.changeGraph()
         parentArr = [-1]*self.vertices        
         dist = [MAX_INT]*self.vertices
         dist[src] = 0
@@ -129,9 +127,9 @@ class graph:
         for elem in edges:
             sleep(1)
             if elem in self.cylinder.keys():
-                self.cylinder[elem].color = color.red
+                self.cylinder[elem].color = color.blue
             else:
-                self.cylinder[(elem[1],elem[0])].color = color.red
+                self.cylinder[(elem[1],elem[0])].color = color.blue
     
     def backtrackMST(self,a):
         edgeList = []
@@ -146,6 +144,7 @@ class graph:
             
     
     def prims(self):
+        self.resetColors()
         if(self.directed):
             self.changeGraph()
         parentArr = [None]*self.vertices    
@@ -176,10 +175,10 @@ class graph:
     def resetColors(self,col = color.blue):
         if(self.directed):
             for elem in list(self.arrows.keys()):
-                self.arrows[elem].color = color.orange
+                self.arrows[elem].color = color.yellow
         else:
             for elem in list(self.cylinder.keys()):
-                self.cylinder[elem].color = color.orange
+                self.cylinder[elem].color = color.yellow
         for elem in self.verList:
             elem.color = col
 
@@ -197,23 +196,29 @@ class graph:
         self.directed = not self.directed
 
     def dijkstraHelper(self):
+        scene.title = "<h2> select source and destination"
+        self.resetColors()
+        if(not self.directed):
+            self.changeGraph()
         src,dst = self.selectVert()
         self.dijkstra(src,dst)
 
-        
+
 if __name__ == "__main__":
     sp1 = sphere(pos = vector(1,0,0),radius = 0, color = color.blue)
+    scene.title="<h2>Select the vertices in the scene"
     n = int(input("Enter the No of Vertices : "))
     g = graph(n)
     for _ in range(n):
         g.addVertices()
     m = n*n 
     sleep(0.1)
+    scene.title="<h2>Select the source and destination nodes to form an edge"
     while(m > n*(n-1)/2):
-        m = int(input("Enter the No of Edges (Less Than n*(n-1)/2) : "))
+        m = int(input("Enter the No of Edges (Less Than Or Equal To (n*(n-1))) : "))
     for _ in range(m):
         g.addEdges()
     print(g.getAdjMatrix())  
-    #g.dijkstraHelper()
-    sleep(2.5)
-    g.prims()
+    button(bind=g.dijkstraHelper, text='Shortest Path')
+    scene.title="<h2>Select the respective buttons for mst and shortest path"
+    button(bind=g.prims, text='Min Span Tree')
