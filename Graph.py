@@ -18,7 +18,6 @@ class graph:
         self.verList.append(temp)
         print(ev.pos)
         
-        
     def lengthbtwn(self,X,Y):
         return ((X.x-Y.x)**2 + (X.y-Y.y)**2)**(1/2)
     
@@ -64,7 +63,6 @@ class graph:
         return self.matrix
         
     def findArrow(self,src,dst):
-        print(src,dst)
         self.arrows[(src,dst)].color = color.blue
     
     def backtrackPath(self,a,dst):
@@ -76,13 +74,14 @@ class graph:
             current = a[current]
         self.verList[pathArr[0]].color = color.red
         for i in range(len(pathArr)-1):
+            if(pathArr[i]!=pathArr[0]):
+                self.verList[pathArr[i]].color = color.green
             sleep(1)
             self.findArrow(pathArr[i+1],pathArr[i])
             sleep(1)
-            if(pathArr[i]!=pathArr[0]):
-                self.verList[pathArr[i]].color = color.green
         sleep(1)        
         self.verList[pathArr[-1]].color = color.blue
+        scene.title = "<h2>Select the respective buttons for mst and shortest path</h2>"
         pathArr = pathArr[::-1]
         print(pathArr)
     
@@ -130,6 +129,7 @@ class graph:
                 self.cylinder[elem].color = color.blue
             else:
                 self.cylinder[(elem[1],elem[0])].color = color.blue
+        scene.title = "<h2>Select the respective buttons for mst and shortest path</h2>"
     
     def backtrackMST(self,a):
         edgeList = []
@@ -137,16 +137,13 @@ class graph:
         print("Edges are : ",end="")
         for i in range(1,self.vertices):
             edgeList.append((a[i],i))
-            print(a[i],i,sep="<->")
+            print(a[i],i,sep="<->",end=" ")
             sum += self.matrixDir[i][a[i]]
         print("Total Length :",sum)
         self.findEdges(edgeList)
             
     
     def prims(self):
-        self.resetColors()
-        if(self.directed):
-            self.changeGraph()
         parentArr = [None]*self.vertices    
         dist = [MAX_INT]*self.vertices
         dist[0],parentArr[0] = 0,-1
@@ -195,30 +192,44 @@ class graph:
 
         self.directed = not self.directed
 
+    def primsHelper(self):
+        buttonDij.visible = False
+        buttonPrim.visible = False
+        self.resetColors()
+        if(self.directed):
+            self.changeGraph()
+        self.prims()
+        buttonDij.visible = True
+        buttonPrim.visible = True
+
     def dijkstraHelper(self):
-        scene.title = "<h2> select source and destination"
+        buttonDij.visible = False
+        buttonPrim.visible = False
+        scene.title = "<h2> select source and destination</h2>"
         self.resetColors()
         if(not self.directed):
             self.changeGraph()
         src,dst = self.selectVert()
         self.dijkstra(src,dst)
+        buttonDij.visible = True
+        buttonPrim.visible = True
 
 
 if __name__ == "__main__":
     sp1 = sphere(pos = vector(1,0,0),radius = 0, color = color.blue)
-    scene.title="<h2>Select the vertices in the scene"
     n = int(input("Enter the No of Vertices : "))
+    scene.title="<h2>Select the vertices in the scene</h2>"
     g = graph(n)
     for _ in range(n):
         g.addVertices()
     m = n*n 
     sleep(0.1)
-    scene.title="<h2>Select the source and destination nodes to form an edge"
-    while(m > n*(n-1)/2):
-        m = int(input("Enter the No of Edges (Less Than Or Equal To (n*(n-1))) : "))
+    scene.title="<h2>Select the source and destination nodes to form an edge</h2>"
+    while(m > n*(n-1)):
+        m = int(input("Enter the No of Edges (Less Than Or Equal To {}) : ".format((n*(n-1))//1)))
     for _ in range(m):
         g.addEdges()
     print(g.getAdjMatrix())  
-    button(bind=g.dijkstraHelper, text='Shortest Path')
-    scene.title="<h2>Select the respective buttons for mst and shortest path"
-    button(bind=g.prims, text='Min Span Tree')
+    buttonDij = button(bind=g.dijkstraHelper, text='Shortest Path')
+    scene.title="<h2>Select the respective buttons for mst and shortest path</h2>"
+    buttonPrim = button(bind=g.primsHelper, text='Min Span Tree')
