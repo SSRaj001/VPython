@@ -83,6 +83,7 @@ class graph:
                 self.verList[pathArr[i]].color = color.green
         sleep(1)        
         self.verList[pathArr[-1]].color = color.blue
+        scene.title = "<h2>Select the respective buttons for mst and shortest path"
         pathArr = pathArr[::-1]
         print(pathArr)
     
@@ -130,6 +131,7 @@ class graph:
                 self.cylinder[elem].color = color.blue
             else:
                 self.cylinder[(elem[1],elem[0])].color = color.blue
+        scene.title = "<h2>Select the respective buttons for mst and shortest path"
     
     def backtrackMST(self,a):
         edgeList = []
