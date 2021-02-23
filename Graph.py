@@ -205,7 +205,7 @@ class graph:
     def dijkstraHelper(self):
         buttonDij.visible = False
         buttonPrim.visible = False
-        scene.title = "<h2> select source and destination</h2>"
+        scene.title = "<h2>Select source and destination</h2>"
         self.resetColors()
         if(not self.directed):
             self.changeGraph()
