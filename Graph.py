@@ -21,6 +21,9 @@ class graph:
     def lengthbtwn(self,X,Y):
         return ((X.x-Y.x)**2 + (X.y-Y.y)**2)**(1/2)
     
+    def midPoint(self,pos1,pos2):
+        return vector(((pos1.pos.x+pos2.pos.x)/2)+0.05,((pos1.pos.y+pos2.pos.y)/2)+0.05,0.05)
+
     def addEdges(self):
         ev = scene.waitfor('click')
         hit1 = scene.mouse.pick
@@ -36,8 +39,10 @@ class graph:
         len = self.lengthbtwn(hit1.pos,hit2.pos)
         self.matrix[src][dest] = len
         self.matrixDir[src][dest], self.matrixDir[dest][src]  = len, len
-        arrowTarget = arrow(pos=hit1.pos,axis=vector(-(hit1.pos.x-hit2.pos.x),-(hit1.pos.y-hit2.pos.y),0),color = color.yellow,shaftwidth = 0.04)
+        arrowTarget = arrow(pos=hit1.pos,axis=vector(-(hit1.pos.x-hit2.pos.x)+0.01,-(hit1.pos.y-hit2.pos.y)+0.01,0),color = color.yellow,shaftwidth = 0.04)
         cylinderTarget = cylinder(pos=hit1.pos,axis=vector(-(hit1.pos.x-hit2.pos.x),-(hit1.pos.y-hit2.pos.y),0),color = color.yellow,radius = 0.03,visible=False)
+        toDisplay = '%0.2f'%(len)
+        textObj = text(pos=self.midPoint(hit1,hit2),axis=vector(-(hit1.pos.x-hit2.pos.x),-(hit1.pos.y-hit2.pos.y),0),color = color.white,align='center',text=toDisplay,height=0.02)
         self.arrows[(src,dest)] = arrowTarget
         self.cylinder[(src,dest)] = cylinderTarget
         print(len)
